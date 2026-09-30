@@ -49,7 +49,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
       case 'positive':
         return (
           <Badge
-            variant="secondary"
+            variant="default"
             className="text-[11px] capitalize bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
           >
             Positive
@@ -58,7 +58,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
       case 'negative':
         return (
           <Badge
-            variant="secondary"
+            variant="default"
             className="text-[11px] capitalize bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400"
           >
             Negative
@@ -66,21 +66,21 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
         );
       case 'neutral':
         return (
-          <Badge variant="secondary" className="text-[11px] capitalize">
+          <Badge variant="default" className="text-[11px] capitalize">
             Neutral
           </Badge>
         );
       case 'mixed':
         return (
           <Badge
-            variant="secondary"
+            variant="default"
             className="text-[11px] capitalize bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400"
           >
             Mixed
           </Badge>
         );
       default:
-        return <Badge variant="secondary">{sentiment}</Badge>;
+        return <Badge variant="default">{sentiment}</Badge>;
     }
   }
 

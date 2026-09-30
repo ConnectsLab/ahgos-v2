@@ -47,8 +47,8 @@ export function AppHeader({ user, business }: AppHeaderProps) {
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Reviews', href: '/reviews', icon: MessageSquare },
-    { name: 'Collect Feedback', href: '/collect', icon: Share2 },
+    // { name: 'Reviews', href: '/reviews', icon: MessageSquare },
+    { name: 'Campaign/Event', href: '/collect', icon: Share2 },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

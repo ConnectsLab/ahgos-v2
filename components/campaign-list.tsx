@@ -7,12 +7,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { CampaignSummary } from '@/lib/data/campaigns';
-import { Star } from 'lucide-react';
+import { MoreHorizontalIcon, ExternalLink } from 'lucide-react';
+import { Button } from './ui/button';
+import Link from 'next/link';
 
 export function CampaignList({ campaigns }: { campaigns: CampaignSummary[] }) {
-  console.log(campaigns);
-
   return (
     <div className="space-y-2">
       {/* Header */}
@@ -27,6 +33,7 @@ export function CampaignList({ campaigns }: { campaigns: CampaignSummary[] }) {
             <TableHead>Campaign/event</TableHead>
             <TableHead className="text-center">Avg Ratings</TableHead>
             <TableHead className="text-right">Highlights</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -45,6 +52,32 @@ export function CampaignList({ campaigns }: { campaigns: CampaignSummary[] }) {
               </TableCell>
               <TableCell className="text-right line-clamp-1">
                 {campaign.topics.join(', ')}
+              </TableCell>
+              <TableCell className="text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" className="size-8">
+                        <MoreHorizontalIcon />
+                        <span className="sr-only">Open menu</span>
+                      </Button>
+                    }
+                  />
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem className={'text-sm'}>
+                      <Link
+                        href={`/campaigns/${campaign.id}`}
+                        className="flex items-center justify-between  w-full"
+                      >
+                        view
+                        <ExternalLink
+                          strokeWidth={1.0}
+                          className="h-2 w-2 text-red-600"
+                        />
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}
