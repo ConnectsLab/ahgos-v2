@@ -20,7 +20,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={cn('h-full', 'antialiased', acorn.variable)}>
+    <html
+      lang="en"
+      className={cn('h-full', 'antialiased', acorn.variable)}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col">
         <ThemeProvider
           attribute="class"

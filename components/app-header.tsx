@@ -25,6 +25,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ModeToggle } from './mode-toggle';
 
 interface AppHeaderProps {
   user: {
@@ -104,6 +105,7 @@ export function AppHeader({ user, business }: AppHeaderProps) {
 
         {/* Right: User Dropdown & Mobile Toggle */}
         <div className="flex items-center gap-2">
+          <ModeToggle />
           {/* Desktop Account Menu */}
           <div className="hidden md:block">
             <DropdownMenu>
