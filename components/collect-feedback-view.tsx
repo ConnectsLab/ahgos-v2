@@ -11,7 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Copy, Check, ExternalLink, MessageSquareQuote, Plus } from 'lucide-react';
+import {
+  Copy,
+  Check,
+  ExternalLink,
+  MessageSquareQuote,
+  Plus,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CollectFeedbackViewProps {
@@ -28,25 +34,13 @@ interface CollectFeedbackViewProps {
   }[];
 }
 
-export function CollectFeedbackView({ business, campaigns }: CollectFeedbackViewProps) {
+export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
   const router = useRouter();
-  const [copied, setCopied] = useState(false);
   const [campaignName, setCampaignName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [campaignError, setCampaignError] = useState<string | null>(null);
 
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const feedbackUrl = `${origin}/r/${business.slug}`;
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(feedbackUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
-  }
 
   async function createCampaign(event: React.FormEvent) {
     event.preventDefault();
@@ -76,65 +70,17 @@ export function CollectFeedbackView({ business, campaigns }: CollectFeedbackView
     <div className="max-w-2xl space-y-6">
       <Card className="shadow-none">
         <CardHeader>
-          <CardTitle className="text-lg">Your Feedback Link</CardTitle>
-          <CardDescription>
-            Share this link with your customers via WhatsApp, Instagram, SMS, or
-            on your receipts.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-2">
-            <Input
-              readOnly
-              value={feedbackUrl}
-              className="font-mono text-xs bg-muted/50 select-all"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCopy}
-              className="shrink-0 gap-2"
-            >
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4 text-emerald-600" />
-                  <span>Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  <span>Copy link</span>
-                </>
-              )}
-            </Button>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            <a
-              href={`/r/${business.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                buttonVariants({ size: 'sm' }),
-                'flex items-center gap-2'
-              )}
-            >
-              <span>Preview feedback page</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-none">
-        <CardHeader>
           <CardTitle className="text-lg">Campaign links</CardTitle>
           <CardDescription>
-            Create a separate link for an event, service, or promotion. Feedback submitted through it stays grouped with that campaign.
+            Create a separate link for an event, service, or promotion. Feedback
+            submitted through it stays grouped with that campaign.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          <form onSubmit={createCampaign} className="flex flex-col gap-2 sm:flex-row">
+          <form
+            onSubmit={createCampaign}
+            className="flex flex-col gap-2 sm:flex-row"
+          >
             <Input
               value={campaignName}
               onChange={(event) => setCampaignName(event.target.value)}
@@ -142,29 +88,56 @@ export function CollectFeedbackView({ business, campaigns }: CollectFeedbackView
               disabled={isCreating}
               maxLength={120}
             />
-            <Button type="submit" disabled={isCreating || !campaignName.trim()} className="shrink-0 gap-2">
+            <Button
+              type="submit"
+              disabled={isCreating || !campaignName.trim()}
+              className="shrink-0 gap-2"
+            >
               <Plus className="h-4 w-4" />
               {isCreating ? 'Creating...' : 'Create campaign'}
             </Button>
           </form>
-          {campaignError && <p className="border border-destructive/50 px-3 py-2 text-sm text-destructive">{campaignError}</p>}
+          {campaignError && (
+            <p className="border border-destructive/50 px-3 py-2 text-sm text-destructive">
+              {campaignError}
+            </p>
+          )}
           {campaigns.length === 0 ? (
-            <p className="border border-dashed px-4 py-5 text-sm text-muted-foreground">No campaigns yet. Create one when you need feedback for a specific event or activity.</p>
+            <p className="border border-dashed px-4 py-5 text-sm text-muted-foreground">
+              No campaigns yet. Create one when you need feedback for a specific
+              event or activity.
+            </p>
           ) : (
             <div className="divide-y border border-border">
               {campaigns.map((campaign) => {
                 const url = `${origin}/r/c/${campaign.slug}`;
                 return (
-                  <div key={campaign.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div
+                    key={campaign.id}
+                    className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
                     <div>
                       <p className="font-medium">{campaign.name}</p>
-                      <p className="mt-1 font-mono text-xs text-muted-foreground">/r/c/{campaign.slug}</p>
+                      <p className="mt-1 font-mono text-xs text-muted-foreground">
+                        /r/c/{campaign.slug}
+                      </p>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={async () => {
-                        await navigator.clipboard.writeText(url);
-                      }}>Copy link</Button>
-                      <a href={`/r/c/${campaign.slug}`} target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ size: 'sm' }), 'gap-2')}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(url);
+                        }}
+                      >
+                        Copy link
+                      </Button>
+                      <a
+                        href={`/r/c/${campaign.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(buttonVariants({ size: 'sm' }), 'gap-2')}
+                      >
                         Preview <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     </div>
