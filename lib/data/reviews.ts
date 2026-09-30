@@ -29,3 +29,15 @@ export async function getBusinessReviews(
     orderBy: [desc(reviews.createdAt)],
   });
 }
+
+export async function getCampaignReviews(
+  businessId: number,
+  campaignId: number
+): Promise<ReviewWithAspects[]> {
+  return await db.query.reviews.findMany({
+    where: (review, { and, eq }) =>
+      and(eq(review.businessId, businessId), eq(review.campaignId, campaignId)),
+    with: { aspects: true },
+    orderBy: [desc(reviews.createdAt)],
+  });
+}

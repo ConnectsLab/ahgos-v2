@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 import { businesses } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
-const protectedRoutes = ['/dashboard', '/reviews', '/collect', '/settings', '/onboarding'];
+const protectedRoutes = ['/dashboard', '/campaigns', '/reviews', '/collect', '/settings', '/onboarding'];
 const authRoutes = ['/sign-in', '/sign-up'];
 
 export async function proxy(request: NextRequest) {
@@ -49,6 +49,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/campaigns/:path*',
     '/reviews/:path*',
     '/collect/:path*',
     '/settings/:path*',
