@@ -10,7 +10,6 @@ import {
   Settings,
   LogOut,
   ChevronsUpDown,
-  Sparkles,
   Calendar,
 } from 'lucide-react';
 import { signOut } from '@/lib/auth-client';
@@ -69,14 +68,14 @@ export function AppSidebar({ user, business, ...props }: AppSidebarProps) {
     {
       label: 'Feedback & Campaigns',
       items: [
-        // {
-        //   name: 'Reviews',
-        //   href: '/reviews',
-        //   icon: MessageSquare,
-        // },
         {
-          name: 'Campaign/Events',
+          name: 'Reviews',
           href: '/reviews',
+          icon: MessageSquare,
+        },
+        {
+          name: 'Campaigns',
+          href: '/campaigns',
           icon: Calendar,
         },
       ],
