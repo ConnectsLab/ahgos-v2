@@ -11,10 +11,8 @@ interface CampaignDashboardProps {
 export function CampaignDashboard({ campaigns }: CampaignDashboardProps) {
   return (
     <div className="space-y-10">
-      {/* Create Campaign */}
-      <CreateCampaign />
-      {/* Campaign List  */}
-      <CampaignList campaigns={campaigns} />
+      {/* Campaign List 
+      <CampaignList campaigns={campaigns} /> */}
     </div>
   );
 }

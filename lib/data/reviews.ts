@@ -16,8 +16,16 @@ export interface ReviewWithAspects {
     sentiment: 'positive' | 'negative' | 'neutral';
     evidence: string;
   }[];
+  campaign: {
+    id: number;
+    businessId: number;
+    name: string;
+    slug: string;
+    createdAt: Date;
+  };
 }
 
+// Get All the Reviews
 export async function getBusinessReviews(
   businessId: number
 ): Promise<ReviewWithAspects[]> {
@@ -25,11 +33,13 @@ export async function getBusinessReviews(
     where: eq(reviews.businessId, businessId),
     with: {
       aspects: true,
+      campaign: true,
     },
     orderBy: [desc(reviews.createdAt)],
   });
 }
 
+// Get Specific Reviews (Per Campaign)
 export async function getCampaignReviews(
   businessId: number,
   campaignId: number

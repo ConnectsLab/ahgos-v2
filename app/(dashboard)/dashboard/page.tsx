@@ -1,4 +1,5 @@
 import { CampaignDashboard } from '@/components/campaign-dashboard';
+import { CreateCampaign } from '@/components/create-campaign';
 import { getCampaignSummaries } from '@/lib/data/campaigns';
 import { getCurrentUserAndBusiness } from '@/lib/session';
 
@@ -9,5 +10,15 @@ export default async function DashboardPage() {
 
   // Then fetch all the campaign from the user
   const campaigns = await getCampaignSummaries(context.business.id);
-  return <CampaignDashboard campaigns={campaigns} />;
+  return (
+    <>
+      {campaigns.length < 1 ? (
+        <div>
+          <CreateCampaign />
+        </div>
+      ) : (
+        <CampaignDashboard campaigns={campaigns} />
+      )}
+    </>
+  );
 }

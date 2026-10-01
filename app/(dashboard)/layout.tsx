@@ -46,7 +46,7 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <span className="text-sm font-semibold tracking-tight">
+            <span className="text-sm font-semibold tracking-tight line-clamp-1">
               {context.business.name}
             </span>
           </div>
