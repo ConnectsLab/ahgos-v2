@@ -1,5 +1,5 @@
 import { PlusSquare } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -15,7 +15,6 @@ export function CreateCampaign() {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          {/* <IconFolderCode /> */}
           <PlusSquare strokeWidth={1.0} />
         </EmptyMedia>
         <EmptyTitle>Welcome</EmptyTitle>
@@ -24,9 +23,9 @@ export function CreateCampaign() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <Button>
-          <Link href={'/collect'}>Create Campaign</Link>
-        </Button>
+        <Link href="/collect" className={buttonVariants()}>
+          Create Campaign
+        </Link>
       </EmptyContent>
     </Empty>
   );

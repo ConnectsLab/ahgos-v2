@@ -11,6 +11,7 @@ import {
   LogOut,
   ChevronsUpDown,
   Sparkles,
+  Calendar,
 } from 'lucide-react';
 import { signOut } from '@/lib/auth-client';
 import {
@@ -68,15 +69,15 @@ export function AppSidebar({ user, business, ...props }: AppSidebarProps) {
     {
       label: 'Feedback & Campaigns',
       items: [
+        // {
+        //   name: 'Reviews',
+        //   href: '/reviews',
+        //   icon: MessageSquare,
+        // },
         {
-          name: 'Reviews',
+          name: 'Campaign/Events',
           href: '/reviews',
-          icon: MessageSquare,
-        },
-        {
-          name: 'Collect Feedback',
-          href: '/collect',
-          icon: Share2,
+          icon: Calendar,
         },
       ],
     },
@@ -110,9 +111,6 @@ export function AppSidebar({ user, business, ...props }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold text-sm">
-                <Sparkles className="size-4" />
-              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">Ahgos</span>
                 <span className="truncate text-xs text-muted-foreground">

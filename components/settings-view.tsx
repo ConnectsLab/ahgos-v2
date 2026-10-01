@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Check, LogOut } from 'lucide-react';
+import { toast } from '@/components/ui/toast';
 
 interface SettingsViewProps {
   user: {
@@ -52,7 +53,10 @@ export function SettingsView({ user, business }: SettingsViewProps) {
       const res = await fetch('/api/business', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: businessName.trim(), type: businessType.trim() }),
+        body: JSON.stringify({
+          name: businessName.trim(),
+          type: businessType.trim(),
+        }),
       });
 
       if (!res.ok) {
@@ -60,10 +64,15 @@ export function SettingsView({ user, business }: SettingsViewProps) {
       }
 
       setSavedSuccess(true);
+      toast.success('Settings saved', {
+        description: 'Business profile has been updated.',
+      });
       router.refresh();
       setTimeout(() => setSavedSuccess(false), 2500);
     } catch {
-      setErrorMessage('Could not update business details. Please try again.');
+      const err = 'Could not update business details. Please try again.';
+      setErrorMessage(err);
+      toast.error('Update failed', { description: err });
     } finally {
       setIsSaving(false);
     }
@@ -149,7 +158,11 @@ export function SettingsView({ user, business }: SettingsViewProps) {
             <Button
               type="submit"
               size="sm"
-              disabled={isSaving || (businessName.trim() === business.name && businessType.trim() === (business.type ?? ''))}
+              disabled={
+                isSaving ||
+                (businessName.trim() === business.name &&
+                  businessType.trim() === (business.type ?? ''))
+              }
             >
               {isSaving ? (
                 <div className="flex items-center gap-2">

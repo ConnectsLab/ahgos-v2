@@ -1,23 +1,39 @@
 import { getCurrentUserAndBusiness } from '@/lib/session';
-import { getBusinessReviews } from '@/lib/data/reviews';
-import { ReviewsView } from '@/components/reviews-view';
+import { CollectFeedbackView } from '@/components/collect-feedback-view';
+import { db } from '@/lib/db';
+import { campaigns } from '@/lib/db/schema';
+import { desc, eq } from 'drizzle-orm';
 
-export default async function ReviewsPage() {
+export default async function CollectPage() {
   const context = await getCurrentUserAndBusiness();
-  if (!context?.business) return null;
+  if (!context) return null;
+  if (!context.business) return null;
 
-  const reviews = await getBusinessReviews(context.business.id);
+  const businessCampaigns = await db
+    .select()
+    .from(campaigns)
+    .where(eq(campaigns.businessId, context.business.id))
+    .orderBy(desc(campaigns.createdAt));
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Reviews</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Collect Feedback
+        </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          All customer feedback and extracted topic sentiments.
+          Share your feedback link to collect reviews from your customers.
         </p>
       </div>
 
-      <ReviewsView initialReviews={reviews} />
+      <CollectFeedbackView
+        business={{
+          id: context.business.id,
+          name: context.business.name,
+          slug: context.business.slug,
+        }}
+        campaigns={businessCampaigns}
+      />
     </div>
   );
 }

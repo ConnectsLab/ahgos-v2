@@ -17,7 +17,10 @@ interface PublicFeedbackFormProps {
   };
 }
 
-export function PublicFeedbackForm({ business, campaign }: PublicFeedbackFormProps) {
+export function PublicFeedbackForm({
+  business,
+  campaign,
+}: PublicFeedbackFormProps) {
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [text, setText] = useState('');
@@ -93,7 +96,9 @@ export function PublicFeedbackForm({ business, campaign }: PublicFeedbackFormPro
           {business.name}
         </h1>
         <p className="text-sm text-muted-foreground">
-          {campaign ? `How was your experience at ${campaign.name}?` : 'How was your experience?'}
+          {campaign
+            ? `How was your experience at ${campaign.name}?`
+            : 'How was your experience?'}
         </p>
       </div>
 

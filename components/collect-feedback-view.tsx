@@ -19,6 +19,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/toast';
 
 interface CollectFeedbackViewProps {
   business: {
@@ -44,23 +45,28 @@ export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
 
   async function createCampaign(event: React.FormEvent) {
     event.preventDefault();
-    if (!campaignName.trim() || isCreating) return;
+    const trimmedName = campaignName.trim();
+    if (!trimmedName || isCreating) return;
     setIsCreating(true);
     setCampaignError(null);
     try {
       const response = await fetch('/api/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: campaignName.trim() }),
+        body: JSON.stringify({ name: trimmedName }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
       setCampaignName('');
+      toast.success('Campaign created', {
+        description: `Campaign "${trimmedName}" is ready to collect reviews.`,
+      });
       router.refresh();
     } catch (caught) {
-      setCampaignError(
-        caught instanceof Error ? caught.message : 'Could not create campaign.'
-      );
+      const message =
+        caught instanceof Error ? caught.message : 'Could not create campaign.';
+      setCampaignError(message);
+      toast.error('Could not create campaign', { description: message });
     } finally {
       setIsCreating(false);
     }
@@ -128,8 +134,12 @@ export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
                         size="sm"
                         onClick={async () => {
                           await navigator.clipboard.writeText(url);
+                          toast.success('Link copied to clipboard', {
+                            description: url,
+                          });
                         }}
                       >
+                        <Copy className="h-3.5 w-3.5 mr-1" />
                         Copy link
                       </Button>
                       <a
