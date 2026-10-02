@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { ModeToggle } from '@/components/mode-toggle';
+import { DashboardDataRefresh } from '@/components/dashboard-data-refresh';
 
 export default async function DashboardLayout({
   children,
@@ -29,6 +30,7 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
+      <DashboardDataRefresh />
       <AppSidebar
         user={{
           id: context.user.id,
