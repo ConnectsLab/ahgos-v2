@@ -6,13 +6,18 @@ export default async function SettingsPage() {
   if (!context?.business) return null;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
+    <div className="space-y-12">
+      <header className="max-w-2xl space-y-4">
+        <p className="text-xs font-semibold uppercase text-primary">
+          Workspace
+        </p>
+        <h1 className="font-heading text-3xl font-medium leading-tight text-foreground md:text-4xl">
+          Settings
+        </h1>
+        <p className="text-sm text-muted-foreground">
           Manage your business information and account.
         </p>
-      </div>
+      </header>
 
       <SettingsView
         user={{

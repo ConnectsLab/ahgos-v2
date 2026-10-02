@@ -6,16 +6,9 @@ import { signOut } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
-import { Check, LogOut } from 'lucide-react';
+import { AlertCircle, Check, LogOut } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
 
 interface SettingsViewProps {
@@ -90,74 +83,72 @@ export function SettingsView({ user, business }: SettingsViewProps) {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      {/* Business Details */}
-      <Card className="border-border/60 shadow-sm">
-        <form onSubmit={handleSaveBusiness}>
-          <CardHeader>
-            <CardTitle className="text-base">Business Details</CardTitle>
-            <CardDescription className="text-xs">
-              Manage your business profile and public feedback identity.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {errorMessage && (
-              <div className="p-3 text-xs text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-                {errorMessage}
-              </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="business-name">Business Name</Label>
-              <Input
-                id="business-name"
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                disabled={isSaving}
-                required
-              />
-              <p className="text-[11px] text-muted-foreground">
-                This name is displayed to customers at the top of your feedback
-                form.
-              </p>
-            </div>
+    <div className="max-w-3xl space-y-12">
+      <section className="max-w-2xl space-y-7 border-b border-border/60 pb-10">
+        <div className="space-y-3">
+          <h2 className="font-heading text-2xl font-medium text-foreground">
+            Business profile
+          </h2>
+          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+            This information appears on your customer feedback forms.
+          </p>
+        </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="business-type">Business Type</Label>
-              <Input
-                id="business-type"
-                value={businessType}
-                onChange={(e) => setBusinessType(e.target.value)}
-                placeholder="e.g. Event planning"
-                disabled={isSaving}
-              />
-            </div>
+        <form onSubmit={handleSaveBusiness} className="space-y-7">
+          {errorMessage && (
+            <Alert variant="destructive" className="items-start">
+              <AlertCircle aria-hidden="true" />
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
 
-            <div className="space-y-2">
-              <Label htmlFor="business-slug">Feedback Slug</Label>
-              <Input
-                id="business-slug"
-                value={business.slug}
-                readOnly
-                disabled
-                className="bg-muted text-muted-foreground font-sans text-xs"
-              />
-              <p className="text-[11px] text-muted-foreground">
-                Your unique URL path identifier for collecting reviews.
-              </p>
-            </div>
-          </CardContent>
-          <CardFooter className="flex items-center justify-between border-t border-border/60 pt-4">
-            <span className="text-xs text-muted-foreground">
+          <div className="space-y-3">
+            <Label htmlFor="business-name">Business name</Label>
+            <Input
+              id="business-name"
+              value={businessName}
+              onChange={(event) => setBusinessName(event.target.value)}
+              disabled={isSaving}
+              required
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label htmlFor="business-type">Business type</Label>
+            <Input
+              id="business-type"
+              value={businessType}
+              onChange={(event) => setBusinessType(event.target.value)}
+              placeholder="e.g. Event planning"
+              disabled={isSaving}
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label htmlFor="business-slug">Feedback slug</Label>
+            <Input
+              id="business-slug"
+              value={business.slug}
+              readOnly
+              disabled
+              className="bg-muted/35 font-sans text-xs"
+            />
+            <p className="text-xs text-muted-foreground">
+              This identifier is used in your feedback URLs.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-6">
+            <span aria-live="polite" className="text-xs text-muted-foreground">
               {savedSuccess && (
-                <span className="flex items-center gap-1.5 text-emerald-600 font-medium">
-                  <Check className="h-3.5 w-3.5" />
-                  Saved changes
+                <span className="flex items-center gap-1.5 font-medium text-emerald-700 dark:text-emerald-400">
+                  <Check aria-hidden="true" className="size-3.5" />
+                  Changes saved
                 </span>
               )}
             </span>
             <Button
               type="submit"
-              size="sm"
               disabled={
                 isSaving ||
                 (businessName.trim() === business.name &&
@@ -165,62 +156,58 @@ export function SettingsView({ user, business }: SettingsViewProps) {
               }
             >
               {isSaving ? (
-                <div className="flex items-center gap-2">
-                  <Spinner />
-                  <span>Saving...</span>
-                </div>
+                <span className="flex items-center gap-2">
+                  <Spinner /> Saving
+                </span>
               ) : (
                 'Save changes'
               )}
             </Button>
-          </CardFooter>
+          </div>
         </form>
-      </Card>
+      </section>
 
-      {/* Account Details */}
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-base">Account</CardTitle>
-          <CardDescription className="text-xs">
-            Your login and profile credentials.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Name</Label>
-            <Input
-              value={user.name}
-              readOnly
-              disabled
-              className="bg-muted/50"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input
-              value={user.email}
-              readOnly
-              disabled
-              className="bg-muted/50"
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex items-center justify-between border-t border-border/60 pt-4">
-          <p className="text-xs text-muted-foreground">
-            Sign out of your account on this device.
+      <section className="max-w-2xl space-y-6">
+        <div className="space-y-3">
+          <h2 className="font-heading text-2xl font-medium text-foreground">
+            Account
+          </h2>
+          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+            Your sign-in identity for Ahgos.
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSignOut}
-            disabled={isSigningOut}
-            className="text-destructive hover:text-destructive gap-2"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            <span>{isSigningOut ? 'Signing out...' : 'Sign out'}</span>
-          </Button>
-        </CardFooter>
-      </Card>
+        </div>
+
+        <div className="space-y-5">
+          <dl className="divide-y divide-border/60 border-y border-border/60">
+            <div className="grid gap-1 py-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6">
+              <dt className="text-xs text-muted-foreground">Name</dt>
+              <dd className="text-sm text-foreground">{user.name}</dd>
+            </div>
+            <div className="grid gap-1 py-5 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6">
+              <dt className="text-xs text-muted-foreground">Email</dt>
+              <dd className="break-all text-sm text-foreground">
+                {user.email}
+              </dd>
+            </div>
+          </dl>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-muted-foreground">
+              Sign out of your account on this device.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="gap-2 text-destructive hover:text-destructive"
+            >
+              <LogOut aria-hidden="true" className="size-4" />
+              {isSigningOut ? 'Signing out...' : 'Sign out'}
+            </Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
