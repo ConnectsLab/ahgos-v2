@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Eye, EyeOff } from 'lucide-react';
+import { toast } from '@/components/ui/toast';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -48,6 +49,9 @@ export default function SignUpPage() {
       if (result.error) {
         setError(result.error.message || 'Failed to create account.');
       } else {
+        toast.success('Account created', {
+          description: 'Next, set up your business workspace.',
+        });
         router.push('/onboarding');
         router.refresh();
       }

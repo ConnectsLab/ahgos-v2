@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
+import { toast } from '@/components/ui/toast';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function SignInPage() {
       if (result.error)
         setError(result.error.message || 'Invalid email or password.');
       else {
+        toast.success('Signed in', { description: 'Welcome back to Ahgos.' });
         router.push('/dashboard');
         router.refresh();
       }

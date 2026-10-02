@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { toast } from '@/components/ui/toast';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -28,6 +29,9 @@ export default function OnboardingPage() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
+      toast.success('Workspace created', {
+        description: `${name.trim()} is ready to collect feedback.`,
+      });
       router.push('/dashboard');
       router.refresh();
     } catch (caught) {

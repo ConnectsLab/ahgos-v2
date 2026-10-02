@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { ReviewWithAspects } from '@/lib/data/reviews';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Popover,
   PopoverContent,
@@ -410,24 +411,27 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
                       No specific topics detected.
                     </p>
                   ) : (
-                    <div className="space-y-2.5">
+                    <div className="space-y-3">
                       {selectedReview.aspects.map((aspect) => (
-                        <div
+                        <Alert
                           key={aspect.id}
-                          className="space-y-1.5 rounded-xl border border-border/50 bg-card p-3 text-xs"
+                          role="note"
+                          className="items-start border-border/50 bg-muted/20 px-4 py-3"
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="font-semibold text-foreground capitalize">
-                              {aspect.name}
-                            </span>
-                            {getSentimentBadge(aspect.sentiment)}
+                          <div className="space-y-2">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <AlertTitle className="font-sans text-sm font-semibold capitalize text-foreground">
+                                {aspect.name}
+                              </AlertTitle>
+                              {getSentimentBadge(aspect.sentiment)}
+                            </div>
+                            {aspect.evidence && (
+                              <AlertDescription className="font-serif leading-relaxed text-muted-foreground">
+                                &ldquo;{aspect.evidence}&rdquo;
+                              </AlertDescription>
+                            )}
                           </div>
-                          {aspect.evidence && (
-                            <p className="text-muted-foreground italic">
-                              &ldquo;{aspect.evidence}&rdquo;
-                            </p>
-                          )}
-                        </div>
+                        </Alert>
                       ))}
                     </div>
                   )}

@@ -1,18 +1,57 @@
+import type { Metadata } from 'next';
 import { db } from '@/lib/db';
 import { campaigns } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { PublicFeedbackForm } from '@/components/public-feedback-form';
+import { cache } from 'react';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function CampaignFeedbackPage({ params }: PageProps) {
-  const { slug } = await params;
-  const campaign = await db.query.campaigns.findFirst({
+const getCampaignBySlug = cache(async (slug: string) =>
+  db.query.campaigns.findFirst({
     where: eq(campaigns.slug, slug),
     with: { business: true },
-  });
+  })
+);
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const campaign = await getCampaignBySlug(slug);
+
+  if (!campaign?.business) {
+    return {
+      title: 'Feedback link not found | Ahgos',
+      description: 'This public feedback link is unavailable.',
+    };
+  }
+
+  const title = `${campaign.name} feedback | ${campaign.business.name}`;
+  const description = `Share your experience with ${campaign.business.name} for ${campaign.name}. Your feedback helps them improve.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      type: 'website',
+      siteName: 'Ahgos',
+      title,
+      description,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+  };
+}
+
+export default async function CampaignFeedbackPage({ params }: PageProps) {
+  const { slug } = await params;
+  const campaign = await getCampaignBySlug(slug);
 
   if (!campaign?.business) {
     return (

@@ -1,5 +1,6 @@
 'use client';
 
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Drawer,
   DrawerClose,
@@ -10,6 +11,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   getSentimentBadge,
   getStatusBadge,
@@ -19,8 +21,10 @@ import { formatDate } from '@/lib/utils';
 import { MoreHorizontal, Star, X } from 'lucide-react';
 
 export function ReviewDetailsDrawer({ review }: { review: ReviewWithAspects }) {
+  const isMobile = useIsMobile();
+
   return (
-    <Drawer>
+    <Drawer swipeDirection={isMobile ? 'down' : 'right'}>
       <DrawerTrigger
         render={
           <Button
@@ -33,7 +37,13 @@ export function ReviewDetailsDrawer({ review }: { review: ReviewWithAspects }) {
         }
       />
 
-      <DrawerContent className="h-[88dvh] max-h-[calc(100dvh-2rem)] sm:max-w-lg">
+      <DrawerContent
+        className={
+          isMobile
+            ? 'h-[88dvh] max-h-[calc(100dvh-2rem)]'
+            : 'h-full sm:max-w-lg'
+        }
+      >
         <DrawerHeader className="shrink-0 border-b border-border/50 px-5 pb-4 text-left">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -126,22 +136,25 @@ export function ReviewDetailsDrawer({ review }: { review: ReviewWithAspects }) {
                 No extracted topics available for this review.
               </div>
             ) : (
-              <div className="divide-y divide-border/60">
+              <div className="space-y-3">
                 {review.aspects.map((aspect) => (
-                  <article
+                  <Alert
                     key={aspect.id}
-                    className="space-y-2 py-3 first:pt-0"
+                    role="note"
+                    className="items-start border-border/50 bg-muted/20 px-4 py-3"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <h4 className="font-medium capitalize text-foreground">
-                        {aspect.name}
-                      </h4>
-                      {getSentimentBadge(aspect.sentiment)}
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <AlertTitle className="font-sans text-sm font-semibold capitalize text-foreground">
+                          {aspect.name}
+                        </AlertTitle>
+                        {getSentimentBadge(aspect.sentiment)}
+                      </div>
+                      <AlertDescription className="font-serif leading-relaxed text-muted-foreground">
+                        “{aspect.evidence}”
+                      </AlertDescription>
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      “{aspect.evidence}”
-                    </p>
-                  </article>
+                  </Alert>
                 ))}
               </div>
             )}
