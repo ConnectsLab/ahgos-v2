@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { CampaignSummary } from '@/lib/data/campaigns';
+import { formatDate } from '@/lib/utils';
 import { MoreHorizontalIcon, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -40,11 +41,7 @@ export function CampaignList({ campaigns }: { campaigns: CampaignSummary[] }) {
           {campaigns.map((campaign) => (
             <TableRow key={campaign.id}>
               <TableCell>
-                {new Date(campaign.createdAt).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                })}
+                {formatDate(campaign.createdAt, 'd MMM yyyy')}
               </TableCell>
               <TableCell>{campaign.name}</TableCell>
               <TableCell className="text-center">

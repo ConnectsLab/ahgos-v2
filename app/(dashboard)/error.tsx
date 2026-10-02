@@ -16,7 +16,7 @@ export default function DashboardError({
   }, [error]);
 
   return (
-    <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-8 text-center max-w-md mx-auto my-12 space-y-4">
+    <div className="mx-auto my-12 max-w-md space-y-4 rounded-2xl border border-destructive/20 bg-destructive/5 p-8 text-center shadow-sm">
       <div className="h-10 w-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
         <AlertCircle className="h-5 w-5" />
       </div>

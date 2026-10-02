@@ -2,8 +2,12 @@
 
 import { useState } from 'react';
 import { ReviewWithAspects } from '@/lib/data/reviews';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { formatDate } from '@/lib/utils';
+import {
+  getSentimentBadge,
+  getStatusBadge,
+} from '@/components/ui/review-badges';
 import {
   Table,
   TableBody,
@@ -43,85 +47,9 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
     return r.overallSentiment === filterSentiment;
   });
 
-  function getSentimentBadge(sentiment: string | null) {
-    if (!sentiment) return null;
-    switch (sentiment) {
-      case 'positive':
-        return (
-          <Badge
-            variant="default"
-            className="text-[11px] capitalize bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
-          >
-            Positive
-          </Badge>
-        );
-      case 'negative':
-        return (
-          <Badge
-            variant="default"
-            className="text-[11px] capitalize bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400"
-          >
-            Negative
-          </Badge>
-        );
-      case 'neutral':
-        return (
-          <Badge variant="default" className="text-[11px] capitalize">
-            Neutral
-          </Badge>
-        );
-      case 'mixed':
-        return (
-          <Badge
-            variant="default"
-            className="text-[11px] capitalize bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400"
-          >
-            Mixed
-          </Badge>
-        );
-      default:
-        return <Badge variant="default">{sentiment}</Badge>;
-    }
-  }
-
-  function getStatusBadge(status: 'DONE' | 'PENDING' | 'FAILED') {
-    switch (status) {
-      case 'PENDING':
-        return (
-          <Badge
-            variant="outline"
-            className="text-[11px] text-muted-foreground gap-1"
-          >
-            <Clock className="h-3 w-3 animate-spin" />
-            <span>Analyzing...</span>
-          </Badge>
-        );
-      case 'FAILED':
-        return (
-          <Badge
-            variant="outline"
-            className="text-[11px] text-rose-600 border-rose-200 gap-1"
-          >
-            <AlertCircle className="h-3 w-3" />
-            <span>Analysis failed</span>
-          </Badge>
-        );
-      case 'DONE':
-        return (
-          <Badge
-            variant="outline"
-            className="text-[11px] text-muted-foreground gap-1 border-emerald-200"
-          >
-            <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-            <span>Analyzed</span>
-          </Badge>
-        );
-    }
-  }
-
   if (initialReviews.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed p-10 text-center flex flex-col items-center justify-center max-w-xl mx-auto my-12 bg-card">
+      <div className="mx-auto my-12 flex max-w-xl flex-col items-center justify-center rounded-2xl border border-border/60 bg-card p-10 text-center shadow-sm">
         <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
           <MessageSquare className="h-6 w-6" />
         </div>
@@ -142,7 +70,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
   return (
     <div className="space-y-4">
       {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-1.5 border-b pb-3">
+      <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-muted/40 p-2">
         {[
           { label: 'All', value: 'all', count: initialReviews.length },
           {
@@ -189,11 +117,11 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block rounded-md border bg-card">
+      <div className="hidden overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm md:block">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[120px]">Rating</TableHead>
+              <TableHead className="w-25">Rating</TableHead>
               <TableHead>Customer Feedback</TableHead>
               <TableHead className="w-[120px]">Sentiment</TableHead>
               <TableHead className="w-[130px]">Status</TableHead>
@@ -239,12 +167,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
                   <TableCell>{getSentimentBadge(r.overallSentiment)}</TableCell>
                   <TableCell>{getStatusBadge(r.analysisStatus)}</TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">
-                    {r.createdAt
-                      ? new Date(r.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      : '—'}
+                    {formatDate(r.createdAt, 'MMM d')}
                   </TableCell>
                 </TableRow>
               ))
@@ -256,7 +179,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
       {/* Mobile Card List View */}
       <div className="md:hidden space-y-2.5">
         {filteredReviews.length === 0 ? (
-          <div className="text-center py-8 text-sm text-muted-foreground border rounded-md p-6">
+          <div className="rounded-2xl border border-border/50 bg-card p-6 py-8 text-center text-sm text-muted-foreground shadow-sm">
             No reviews match the selected filter.
           </div>
         ) : (
@@ -264,7 +187,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
             <div
               key={r.id}
               onClick={() => setSelectedReview(r)}
-              className="p-3.5 border rounded-lg bg-card active:bg-muted/60 transition-colors space-y-2 cursor-pointer"
+              className="space-y-2 rounded-2xl border border-border/50 bg-card p-4 shadow-sm transition-colors active:bg-muted/60 cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-0.5">
@@ -280,12 +203,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
                   ))}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {r.createdAt
-                    ? new Date(r.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })
-                    : '—'}
+                  {formatDate(r.createdAt, 'MMM d')}
                 </div>
               </div>
               <p className="text-sm line-clamp-2 leading-snug">
@@ -322,16 +240,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
                   ))}
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  {selectedReview.createdAt
-                    ? new Date(selectedReview.createdAt).toLocaleDateString(
-                        'en-US',
-                        {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        }
-                      )
-                    : '—'}
+                  {formatDate(selectedReview.createdAt, 'MMM d, yyyy')}
                 </span>
               </div>
               <DialogTitle className="text-base font-semibold pt-2">
@@ -344,12 +253,12 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
 
             <div className="space-y-5 pt-2">
               {/* Full Review Text */}
-              <div className="rounded-md bg-muted/40 p-3.5 text-sm leading-relaxed border">
+              <div className="rounded-xl border border-border/50 bg-muted/40 p-3.5 text-sm leading-relaxed">
                 &ldquo;{selectedReview.text}&rdquo;
               </div>
 
               {/* Overall Sentiment */}
-              <div className="flex items-center justify-between text-sm py-1 border-b">
+              <div className="flex items-center justify-between border-b border-border/60 py-2 text-sm">
                 <span className="text-muted-foreground">
                   Overall Sentiment:
                 </span>
@@ -360,7 +269,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
 
               {/* Status Message if Pending or Failed */}
               {selectedReview.analysisStatus === 'PENDING' && (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/60 p-3 rounded-md">
+                <div className="flex items-center gap-2 rounded-xl bg-muted/50 p-3 text-xs text-muted-foreground">
                   <Clock className="h-4 w-4 animate-spin text-primary" />
                   <span>
                     Analyzing feedback... Topic extraction is in progress.
@@ -369,7 +278,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
               )}
 
               {selectedReview.analysisStatus === 'FAILED' && (
-                <div className="flex items-center gap-2 text-xs text-rose-600 bg-rose-50 dark:bg-rose-950/40 p-3 rounded-md">
+                <div className="flex items-center gap-2 rounded-xl bg-rose-50 p-3 text-xs text-rose-600 dark:bg-rose-950/40">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>We couldn&apos;t analyze this feedback yet.</span>
                 </div>
@@ -390,7 +299,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
                       {selectedReview.aspects.map((aspect) => (
                         <div
                           key={aspect.id}
-                          className="rounded-md border p-3 text-xs space-y-1.5 bg-card"
+                          className="space-y-1.5 rounded-xl border border-border/50 bg-card p-3 text-xs"
                         >
                           <div className="flex items-center justify-between">
                             <span className="font-semibold text-foreground capitalize">

@@ -5,6 +5,7 @@ import { eq, desc } from 'drizzle-orm';
 export interface ReviewWithAspects {
   id: number;
   businessId: number | null;
+  campaignId: number | null;
   rating: number;
   text: string;
   overallSentiment: 'positive' | 'negative' | 'neutral' | 'mixed' | null;
@@ -22,13 +23,15 @@ export interface ReviewWithAspects {
     name: string;
     slug: string;
     createdAt: Date;
-  };
+  } | null;
 }
 
 // Get All the Reviews
 export async function getBusinessReviews(
-  businessId: number
+  businessId?: number | null
 ): Promise<ReviewWithAspects[]> {
+  if (!businessId) return [];
+
   return await db.query.reviews.findMany({
     where: eq(reviews.businessId, businessId),
     with: {
@@ -41,13 +44,15 @@ export async function getBusinessReviews(
 
 // Get Specific Reviews (Per Campaign)
 export async function getCampaignReviews(
-  businessId: number,
-  campaignId: number
+  businessId?: number | null,
+  campaignId?: number | null
 ): Promise<ReviewWithAspects[]> {
+  if (!businessId || !campaignId) return [];
+
   return await db.query.reviews.findMany({
     where: (review, { and, eq }) =>
       and(eq(review.businessId, businessId), eq(review.campaignId, campaignId)),
-    with: { aspects: true },
+    with: { aspects: true, campaign: true },
     orderBy: [desc(reviews.createdAt)],
   });
 }

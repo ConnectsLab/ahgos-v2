@@ -74,7 +74,7 @@ export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <Card className="shadow-none">
+      <Card className="border-border/60 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg">Campaign links</CardTitle>
           <CardDescription>
@@ -104,17 +104,17 @@ export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
             </Button>
           </form>
           {campaignError && (
-            <p className="border border-destructive/50 px-3 py-2 text-sm text-destructive">
+            <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
               {campaignError}
             </p>
           )}
           {campaigns.length === 0 ? (
-            <p className="border border-dashed px-4 py-5 text-sm text-muted-foreground">
+            <p className="rounded-xl border border-border/50 bg-muted/30 px-4 py-5 text-sm text-muted-foreground">
               No campaigns yet. Create one when you need feedback for a specific
               event or activity.
             </p>
           ) : (
-            <div className="divide-y border border-border">
+            <div className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border/50 bg-background/50">
               {campaigns.map((campaign) => {
                 const url = `${origin}/r/c/${campaign.slug}`;
                 return (
@@ -159,7 +159,7 @@ export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
         </CardContent>
       </Card>
 
-      <Card className="shadow-none border-dashed bg-muted/20">
+      <Card className="border-border/40 bg-muted/30 shadow-none">
         <CardHeader>
           <div className="flex items-center gap-2 text-primary font-medium text-sm">
             <MessageSquareQuote className="h-4 w-4" />

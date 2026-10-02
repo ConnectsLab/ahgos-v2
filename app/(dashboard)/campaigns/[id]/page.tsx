@@ -46,7 +46,7 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
 
   return (
     <div className="space-y-8">
-      <div className="flex  gap-5 border-b border-border pb-6  items-end justify-between">
+      <div className="flex items-end justify-between gap-5 border-b border-border/60 pb-6">
         <div>
           <Link
             href="/dashboard"
@@ -80,12 +80,12 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
         </a>
       </div>
 
-      <div className="grid grid-cols-2 gap-px  sm:max-w-md">
-        <div className="bg-card p-4">
+      <div className="grid grid-cols-2 gap-3 sm:max-w-lg">
+        <div className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm">
           <p className="text-xs text-muted-foreground">Reviews</p>
           <p className="mt-1 text-2xl font-medium">{campaignReviews.length}</p>
         </div>
-        <div className="bg-card p-4">
+        <div className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm">
           <p className="text-xs text-muted-foreground">Average rating</p>
           <p className="mt-1 flex items-center gap-1 text-2xl font-medium">
             {averageRating ?? '—'}{' '}

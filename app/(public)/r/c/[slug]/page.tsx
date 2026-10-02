@@ -17,9 +17,11 @@ export default async function CampaignFeedbackPage({ params }: PageProps) {
   if (!campaign?.business) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background p-4">
-        <div className="max-w-sm border border-border bg-card p-6 text-center">
+        <div className="max-w-sm rounded-2xl border border-border/60 bg-card p-6 text-center shadow-sm">
           <h1 className="text-lg font-medium">Campaign not found</h1>
-          <p className="mt-2 text-sm text-muted-foreground">This feedback link may be incorrect or no longer available.</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            This feedback link may be incorrect or no longer available.
+          </p>
         </div>
       </main>
     );

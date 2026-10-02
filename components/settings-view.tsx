@@ -92,7 +92,7 @@ export function SettingsView({ user, business }: SettingsViewProps) {
   return (
     <div className="max-w-2xl space-y-6">
       {/* Business Details */}
-      <Card className="shadow-none">
+      <Card className="border-border/60 shadow-sm">
         <form onSubmit={handleSaveBusiness}>
           <CardHeader>
             <CardTitle className="text-base">Business Details</CardTitle>
@@ -146,7 +146,7 @@ export function SettingsView({ user, business }: SettingsViewProps) {
               </p>
             </div>
           </CardContent>
-          <CardFooter className="flex items-center justify-between border-t pt-4">
+          <CardFooter className="flex items-center justify-between border-t border-border/60 pt-4">
             <span className="text-xs text-muted-foreground">
               {savedSuccess && (
                 <span className="flex items-center gap-1.5 text-emerald-600 font-medium">
@@ -178,7 +178,7 @@ export function SettingsView({ user, business }: SettingsViewProps) {
       </Card>
 
       {/* Account Details */}
-      <Card className="shadow-none">
+      <Card className="border-border/60 shadow-sm">
         <CardHeader>
           <CardTitle className="text-base">Account</CardTitle>
           <CardDescription className="text-xs">
@@ -205,7 +205,7 @@ export function SettingsView({ user, business }: SettingsViewProps) {
             />
           </div>
         </CardContent>
-        <CardFooter className="border-t pt-4 flex justify-between items-center">
+        <CardFooter className="flex items-center justify-between border-t border-border/60 pt-4">
           <p className="text-xs text-muted-foreground">
             Sign out of your account on this device.
           </p>

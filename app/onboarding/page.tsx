@@ -32,7 +32,9 @@ export default function OnboardingPage() {
       router.refresh();
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : 'Could not create your business.'
+        caught instanceof Error
+          ? caught.message
+          : 'Could not create your business.'
       );
     } finally {
       setIsSubmitting(false);
@@ -41,22 +43,57 @@ export default function OnboardingPage() {
 
   return (
     <main className="min-h-screen bg-background px-4 py-10 sm:flex sm:items-center sm:justify-center">
-      <section className="w-full max-w-xl border border-border bg-card p-6 sm:p-9">
+      <section className="w-full max-w-xl rounded-2xl border border-border/60 bg-card p-6 shadow-sm sm:p-9">
         <p className="text-sm text-muted-foreground">Ahgos setup · 1 of 1</p>
-        <h1 className="mt-8 text-3xl font-medium tracking-tight">Tell us about your business.</h1>
-        <p className="mt-2 text-sm text-muted-foreground">This is what customers will see when they open a feedback link.</p>
+        <h1 className="mt-8 text-3xl font-medium tracking-tight">
+          Tell us about your business.
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This is what customers will see when they open a feedback link.
+        </p>
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-          {error && <p className="border border-destructive/50 px-3 py-2 text-sm text-destructive">{error}</p>}
+          {error && (
+            <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              {error}
+            </p>
+          )}
           <div className="space-y-2">
             <Label htmlFor="business-name">Business name</Label>
-            <Input id="business-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. The Garden Events" autoComplete="organization" disabled={isSubmitting} required />
+            <Input
+              id="business-name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="e.g. The Garden Events"
+              autoComplete="organization"
+              disabled={isSubmitting}
+              required
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="business-type">Business type <span className="text-muted-foreground">(optional)</span></Label>
-            <Input id="business-type" value={type} onChange={(event) => setType(event.target.value)} placeholder="e.g. Event planning" disabled={isSubmitting} />
+            <Label htmlFor="business-type">
+              Business type{' '}
+              <span className="text-muted-foreground">(optional)</span>
+            </Label>
+            <Input
+              id="business-type"
+              value={type}
+              onChange={(event) => setType(event.target.value)}
+              placeholder="e.g. Event planning"
+              disabled={isSubmitting}
+            />
           </div>
-          <Button type="submit" className="mt-2 w-full" disabled={isSubmitting || !name.trim()}>
-            {isSubmitting ? <><Spinner /> Creating workspace...</> : 'Continue to Ahgos'}
+          <Button
+            type="submit"
+            className="mt-2 w-full"
+            disabled={isSubmitting || !name.trim()}
+          >
+            {isSubmitting ? (
+              <>
+                <Spinner /> Creating workspace...
+              </>
+            ) : (
+              'Continue to Ahgos'
+            )}
           </Button>
         </form>
       </section>

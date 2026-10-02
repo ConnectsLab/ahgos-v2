@@ -42,7 +42,7 @@ export default async function DashboardLayout({
         }}
       />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b bg-background/95 px-4 backdrop-blur transition-[width,height] ease-linear">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-background/90 px-4 transition-[width,height] ease-linear sm:px-6">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
@@ -54,7 +54,7 @@ export default async function DashboardLayout({
             <ModeToggle />
           </div>
         </header>
-        <div className="flex-1 overflow-y-auto max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 md:py-8">
+        <div className="mx-auto w-full max-w-6xl flex-1 overflow-y-auto px-4 py-7 sm:px-6 md:py-9">
           {children}
         </div>
       </SidebarInset>

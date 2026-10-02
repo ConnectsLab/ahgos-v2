@@ -90,7 +90,7 @@ export function PublicFeedbackForm({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto p-4 sm:p-6">
+    <div className="mx-auto w-full max-w-md rounded-3xl border border-border/40 bg-card p-5 shadow-sm sm:p-7">
       <div className="text-center mb-6 space-y-1.5">
         <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
           {business.name}
@@ -154,7 +154,7 @@ export function PublicFeedbackForm({
         </div>
 
         {error && (
-          <div className="p-3 text-xs text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+          <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-xs text-destructive">
             {error}
           </div>
         )}
