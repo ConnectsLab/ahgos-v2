@@ -6,7 +6,7 @@ import { campaigns } from '@/lib/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { getCampaignReviews } from '@/lib/data/reviews';
 import { getCurrentUserAndBusiness } from '@/lib/session';
-import { ReviewsView } from '@/components/reviews-view';
+import { CampaignDetailsTabs } from '@/components/campaign-details-tabs';
 import { CampaignLinkActions } from '@/components/campaign-link-actions';
 import { formatDate } from '@/lib/utils';
 
@@ -125,18 +125,7 @@ export default async function CampaignPage({ params }: CampaignPageProps) {
         </div>
       </section>
 
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-heading text-xl font-medium text-foreground">
-            Customer feedback
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            {campaignReviews.length}{' '}
-            {campaignReviews.length === 1 ? 'review' : 'reviews'}
-          </p>
-        </div>
-        <ReviewsView initialReviews={campaignReviews} />
-      </section>
+      <CampaignDetailsTabs campaignId={campaign.id} reviews={campaignReviews} />
     </div>
   );
 }
