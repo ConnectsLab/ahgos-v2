@@ -139,7 +139,7 @@ export function SettingsView({ user, business }: SettingsViewProps) {
                 value={business.slug}
                 readOnly
                 disabled
-                className="bg-muted text-muted-foreground font-mono text-xs"
+                className="bg-muted text-muted-foreground font-sans text-xs"
               />
               <p className="text-[11px] text-muted-foreground">
                 Your unique URL path identifier for collecting reviews.

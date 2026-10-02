@@ -124,7 +124,7 @@ export function CollectFeedbackView({ campaigns }: CollectFeedbackViewProps) {
                   >
                     <div>
                       <p className="font-medium">{campaign.name}</p>
-                      <p className="mt-1 font-mono text-xs text-muted-foreground">
+                      <p className="mt-1 font-sans text-xs text-muted-foreground">
                         /r/c/{campaign.slug}
                       </p>
                     </div>
