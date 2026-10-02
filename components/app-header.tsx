@@ -65,7 +65,7 @@ export function AppHeader({ user, business }: AppHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex h-14 items-center justify-between">
         {/* Left: Brand & Business Name */}
         <div className="flex items-center gap-6">

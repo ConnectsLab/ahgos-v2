@@ -9,24 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   getSentimentBadge,
   getStatusBadge,
 } from '@/components/ui/review-badges';
-import { Button } from '@/components/ui/button';
 import { ReviewWithAspects } from '@/lib/data/reviews';
-import { formatDate } from '@/lib/utils';
-import { ChevronDown, MoreHorizontal, Search, Star, X } from 'lucide-react';
+import { ReviewDetailsDrawer } from '@/components/review-details-drawer';
+import { Filter, Search, Star } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 const sentimentOptions = [
   'all',
@@ -53,6 +51,9 @@ export function ReviewsTable({ reviews }: { reviews: ReviewWithAspects[] }) {
       ).sort((a, b) => a.localeCompare(b)),
     [reviews]
   );
+
+  const activeFilterCount =
+    Number(campaignFilter !== 'all') + Number(sentimentFilter !== 'all');
 
   const filteredReviews = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -95,44 +96,108 @@ export function ReviewsTable({ reviews }: { reviews: ReviewWithAspects[] }) {
           />
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-          <div className="relative min-w-40">
-            <select
-              value={campaignFilter}
-              onChange={(event) => setCampaignFilter(event.target.value)}
-              className="h-11 w-full appearance-none rounded-2xl border border-border/50 bg-card px-3.5 pr-9 text-sm text-foreground shadow-none outline-none transition focus:border-ring/40 focus:ring-2 focus:ring-ring/20"
-              aria-label="Filter by campaign"
-            >
-              <option value="all">All campaigns</option>
-              {campaignOptions.map((campaign) => (
-                <option key={campaign} value={campaign}>
-                  {campaign}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 justify-center gap-2 rounded-2xl border-border/50 px-4 sm:justify-start"
+                aria-label={
+                  activeFilterCount
+                    ? `Filters, ${activeFilterCount} active`
+                    : 'Open review filters'
+                }
+              >
+                <Filter className="size-4" aria-hidden="true" />
+                <span>Filters</span>
+                {activeFilterCount > 0 && (
+                  <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Button>
+            }
+          />
+          <PopoverContent
+            align="end"
+            className="w-80 max-w-[calc(100vw-2rem)] gap-4 rounded-xl border border-border/60 shadow-lg"
+          >
+            <PopoverHeader className="flex-row items-center justify-between">
+              <PopoverTitle>Filters</PopoverTitle>
+              {activeFilterCount > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 gap-1.5 px-2 text-xs text-muted-foreground"
+                  onClick={() => {
+                    setCampaignFilter('all');
+                    setSentimentFilter('all');
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
+            </PopoverHeader>
 
-          <div className="relative min-w-40">
-            <select
-              value={sentimentFilter}
-              onChange={(event) =>
-                setSentimentFilter(
-                  event.target.value as (typeof sentimentOptions)[number]
-                )
-              }
-              className="h-11 w-full appearance-none rounded-2xl border border-border/50 bg-card px-3.5 pr-9 text-sm text-foreground shadow-none outline-none transition focus:border-ring/40 focus:ring-2 focus:ring-ring/20"
-              aria-label="Filter by sentiment"
-            >
-              {sentimentOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option === 'all' ? 'All sentiments' : option}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
-        </div>
+            <fieldset className="space-y-2">
+              <legend className="text-xs font-medium text-muted-foreground">
+                Campaign
+              </legend>
+              <div
+                role="group"
+                aria-label="Filter by campaign"
+                className="max-h-40 space-y-1 overflow-y-auto"
+              >
+                {['all', ...campaignOptions].map((campaign) => {
+                  const isSelected = campaignFilter === campaign;
+                  return (
+                    <Button
+                      key={campaign}
+                      type="button"
+                      variant={isSelected ? 'secondary' : 'ghost'}
+                      size="sm"
+                      aria-pressed={isSelected}
+                      onClick={() => setCampaignFilter(campaign)}
+                      className="h-8 w-full justify-start px-2.5 text-left text-xs"
+                    >
+                      {campaign === 'all' ? 'All campaigns' : campaign}
+                    </Button>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-2">
+              <legend className="text-xs font-medium text-muted-foreground">
+                Sentiment
+              </legend>
+              <div
+                role="group"
+                aria-label="Filter by sentiment"
+                className="flex flex-wrap gap-1.5"
+              >
+                {sentimentOptions.map((option) => {
+                  const isSelected = sentimentFilter === option;
+                  return (
+                    <Button
+                      key={option}
+                      type="button"
+                      variant={isSelected ? 'secondary' : 'ghost'}
+                      size="sm"
+                      aria-pressed={isSelected}
+                      onClick={() => setSentimentFilter(option)}
+                      className="h-8 px-2.5 text-xs capitalize"
+                    >
+                      {option === 'all' ? 'All' : option}
+                    </Button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="hidden border-b border-border/50 md:block">
@@ -198,126 +263,7 @@ export function ReviewsTable({ reviews }: { reviews: ReviewWithAspects[] }) {
                   </TableCell>
 
                   <TableCell className="text-right">
-                    <Drawer>
-                      <DrawerTrigger
-                        render={
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`Open review details for ${review.campaign?.name ?? 'campaign'}`}
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        }
-                      />
-
-                      <DrawerContent className="sm:max-w-md">
-                        <DrawerHeader className="pb-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <DrawerTitle className="text-base font-semibold">
-                                Review details
-                              </DrawerTitle>
-                              <DrawerDescription className="mt-1 text-xs text-muted-foreground">
-                                {review.campaign?.name ?? 'Unassigned event'}
-                              </DrawerDescription>
-                            </div>
-
-                            <DrawerClose
-                              render={
-                                <Button
-                                  variant="ghost"
-                                  size="icon-sm"
-                                  aria-label="Close drawer"
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              }
-                            />
-                          </div>
-                        </DrawerHeader>
-
-                        <div className="space-y-4 overflow-y-auto px-4 pb-4">
-                          <div className="rounded-xl border border-border/50 bg-muted/40 p-3">
-                            <div className="mb-2 flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-1">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`h-3.5 w-3.5 ${
-                                      i < review.rating
-                                        ? 'fill-amber-400 text-amber-400'
-                                        : 'text-muted-foreground/30'
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-xs text-muted-foreground">
-                                {formatDate(review.createdAt, 'MMM d, yyyy')}
-                              </span>
-                            </div>
-
-                            <p className="text-sm leading-relaxed text-foreground">
-                              “{review.text}”
-                            </p>
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                              Overall sentiment
-                            </div>
-                            {getSentimentBadge(review.overallSentiment)}
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                              Event name
-                            </div>
-                            <div className="rounded-xl border border-border/50 bg-background/70 px-3 py-2 text-sm text-foreground">
-                              {review.campaign?.name ?? 'No campaign assigned'}
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                              Status
-                            </div>
-                            {getStatusBadge(review.analysisStatus)}
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                              What customers are talking about
-                            </div>
-
-                            {review.aspects.length === 0 ? (
-                              <div className="rounded-xl border border-border/50 bg-muted/30 p-3 text-sm text-muted-foreground">
-                                No extracted topics available for this review.
-                              </div>
-                            ) : (
-                              <div className="space-y-2.5">
-                                {review.aspects.map((aspect) => (
-                                  <div
-                                    key={aspect.id}
-                                    className="rounded-xl border border-border/50 bg-card p-3 text-xs"
-                                  >
-                                    <div className="mb-1 flex items-center justify-between gap-3">
-                                      <span className="font-semibold capitalize text-foreground">
-                                        {aspect.name}
-                                      </span>
-                                      {getSentimentBadge(aspect.sentiment)}
-                                    </div>
-                                    <p className="text-muted-foreground italic">
-                                      “{aspect.evidence}”
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </DrawerContent>
-                    </Drawer>
+                    <ReviewDetailsDrawer review={review} />
                   </TableCell>
                 </TableRow>
               ))
@@ -348,126 +294,7 @@ export function ReviewsTable({ reviews }: { reviews: ReviewWithAspects[] }) {
                   ))}
                 </div>
 
-                <Drawer>
-                  <DrawerTrigger
-                    render={
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Open review details for ${review.campaign?.name ?? 'campaign'}`}
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    }
-                  />
-
-                  <DrawerContent className="sm:max-w-md">
-                    <DrawerHeader className="pb-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <DrawerTitle className="text-base font-semibold">
-                            Review details
-                          </DrawerTitle>
-                          <DrawerDescription className="mt-1 text-xs text-muted-foreground">
-                            {review.campaign?.name ?? 'Unassigned event'}
-                          </DrawerDescription>
-                        </div>
-
-                        <DrawerClose
-                          render={
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              aria-label="Close drawer"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          }
-                        />
-                      </div>
-                    </DrawerHeader>
-
-                    <div className="space-y-4 overflow-y-auto px-4 pb-4">
-                      <div className="rounded-xl border border-border/50 bg-muted/40 p-3">
-                        <div className="mb-2 flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-1">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-3.5 w-3.5 ${
-                                  i < review.rating
-                                    ? 'fill-amber-400 text-amber-400'
-                                    : 'text-muted-foreground/30'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDate(review.createdAt, 'MMM d, yyyy')}
-                          </span>
-                        </div>
-
-                        <p className="text-sm leading-relaxed text-foreground">
-                          “{review.text}”
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                          Overall sentiment
-                        </div>
-                        {getSentimentBadge(review.overallSentiment)}
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                          Event name
-                        </div>
-                        <div className="rounded-xl border border-border/50 bg-background/70 px-3 py-2 text-sm text-foreground">
-                          {review.campaign?.name ?? 'No campaign assigned'}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                          Status
-                        </div>
-                        {getStatusBadge(review.analysisStatus)}
-                      </div>
-
-                      <div className="space-y-2">
-                        <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                          What customers are talking about
-                        </div>
-
-                        {review.aspects.length === 0 ? (
-                          <div className="rounded-xl border border-border/50 bg-muted/30 p-3 text-sm text-muted-foreground">
-                            No extracted topics available for this review.
-                          </div>
-                        ) : (
-                          <div className="space-y-2.5">
-                            {review.aspects.map((aspect) => (
-                              <div
-                                key={aspect.id}
-                                className="rounded-xl border border-border/50 bg-card p-3 text-xs"
-                              >
-                                <div className="mb-1 flex items-center justify-between gap-3">
-                                  <span className="font-semibold capitalize text-foreground">
-                                    {aspect.name}
-                                  </span>
-                                  {getSentimentBadge(aspect.sentiment)}
-                                </div>
-                                <p className="text-muted-foreground italic">
-                                  “{aspect.evidence}”
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </DrawerContent>
-                </Drawer>
+                <ReviewDetailsDrawer review={review} />
               </div>
 
               <p className="font-serif text-base leading-relaxed text-foreground">
