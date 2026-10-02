@@ -82,7 +82,7 @@ export function ReviewDetailsDrawer({ review }: { review: ReviewWithAspects }) {
                 {formatDate(review.createdAt, 'MMM d, yyyy')}
               </span>
             </div>
-            <blockquote className="rounded-xl bg-muted/45 p-4 font-serif text-lg leading-relaxed text-foreground">
+            <blockquote className="rounded-xl bg-muted/45 p-4 font-serif text-md leading-relaxed text-foreground">
               “{review.text}”
             </blockquote>
           </section>

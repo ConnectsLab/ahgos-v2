@@ -4,6 +4,7 @@ import { eq, desc } from 'drizzle-orm';
 
 export interface DashboardStats {
   totalReviews: number;
+  analyzedReviewCount: number;
   averageRating: number | null;
   positiveCount: number;
   neutralCount: number;
@@ -17,6 +18,7 @@ export interface DashboardStats {
   }[];
   recentReviews: {
     id: number;
+    campaignId: number | null;
     rating: number;
     text: string;
     overallSentiment: 'positive' | 'negative' | 'neutral' | 'mixed' | null;
@@ -32,6 +34,7 @@ export async function getDashboardData(
   const businessReviews = await db
     .select({
       id: reviews.id,
+      campaignId: reviews.campaignId,
       rating: reviews.rating,
       text: reviews.text,
       overallSentiment: reviews.overallSentiment,
@@ -47,6 +50,7 @@ export async function getDashboardData(
   if (totalReviews === 0) {
     return {
       totalReviews: 0,
+      analyzedReviewCount: 0,
       averageRating: null,
       positiveCount: 0,
       neutralCount: 0,
@@ -122,6 +126,8 @@ export async function getDashboardData(
 
   return {
     totalReviews,
+    analyzedReviewCount:
+      positiveCount + neutralCount + negativeCount + mixedCount,
     averageRating,
     positiveCount,
     neutralCount,
