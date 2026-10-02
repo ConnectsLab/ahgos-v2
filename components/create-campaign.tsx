@@ -23,7 +23,7 @@ export function CreateCampaign() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <Link href="/collect" className={buttonVariants()}>
+        <Link href="/campaigns" className={buttonVariants()}>
           Create Campaign
         </Link>
       </EmptyContent>

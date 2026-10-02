@@ -61,7 +61,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
           with extracted topics.
         </p>
         <Button>
-          <Link href="/collect">Collect feedback</Link>
+          <Link href="/campaigns">Collect feedback</Link>
         </Button>
       </div>
     );
