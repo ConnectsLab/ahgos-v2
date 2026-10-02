@@ -1,8 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ReviewWithAspects } from '@/lib/data/reviews';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { formatDate } from '@/lib/utils';
 import {
   getSentimentBadge,
@@ -28,9 +36,26 @@ import {
   Clock,
   AlertCircle,
   CheckCircle2,
+  Filter,
   MessageSquare,
+  Search,
 } from 'lucide-react';
 import Link from 'next/link';
+
+const sentimentOptions = [
+  { label: 'All', value: 'all' },
+  { label: 'Positive', value: 'positive' },
+  { label: 'Neutral', value: 'neutral' },
+  { label: 'Negative', value: 'negative' },
+  { label: 'Mixed', value: 'mixed' },
+] as const;
+
+const statusOptions = [
+  { label: 'All statuses', value: 'all' },
+  { label: 'Analyzing', value: 'PENDING' },
+  { label: 'Analyzed', value: 'DONE' },
+  { label: 'Failed', value: 'FAILED' },
+] as const;
 
 interface ReviewsViewProps {
   initialReviews: ReviewWithAspects[];
@@ -39,13 +64,38 @@ interface ReviewsViewProps {
 export function ReviewsView({ initialReviews }: ReviewsViewProps) {
   const [selectedReview, setSelectedReview] =
     useState<ReviewWithAspects | null>(null);
-  const [filterSentiment, setFilterSentiment] = useState<string>('all');
+  const [search, setSearch] = useState('');
+  const [filterSentiment, setFilterSentiment] =
+    useState<(typeof sentimentOptions)[number]['value']>('all');
+  const [filterStatus, setFilterStatus] =
+    useState<(typeof statusOptions)[number]['value']>('all');
 
-  const filteredReviews = initialReviews.filter((r) => {
-    if (filterSentiment === 'all') return true;
-    if (filterSentiment === 'pending') return r.analysisStatus === 'PENDING';
-    return r.overallSentiment === filterSentiment;
-  });
+  const activeFilterCount =
+    Number(filterSentiment !== 'all') + Number(filterStatus !== 'all');
+
+  const filteredReviews = useMemo(() => {
+    const term = search.trim().toLowerCase();
+
+    return initialReviews.filter((review) => {
+      const matchesSentiment =
+        filterSentiment === 'all' ||
+        review.overallSentiment === filterSentiment;
+      const matchesStatus =
+        filterStatus === 'all' || review.analysisStatus === filterStatus;
+      const matchesSearch =
+        !term ||
+        [
+          review.text,
+          review.campaign?.name ?? '',
+          review.aspects.map((aspect) => aspect.name).join(' '),
+        ]
+          .join(' ')
+          .toLowerCase()
+          .includes(term);
+
+      return matchesSentiment && matchesStatus && matchesSearch;
+    });
+  }, [filterSentiment, filterStatus, initialReviews, search]);
 
   if (initialReviews.length === 0) {
     return (
@@ -69,51 +119,116 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
 
   return (
     <div className="space-y-4">
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-muted/40 p-2">
-        {[
-          { label: 'All', value: 'all', count: initialReviews.length },
-          {
-            label: 'Positive',
-            value: 'positive',
-            count: initialReviews.filter(
-              (r) => r.overallSentiment === 'positive'
-            ).length,
-          },
-          {
-            label: 'Neutral',
-            value: 'neutral',
-            count: initialReviews.filter(
-              (r) => r.overallSentiment === 'neutral'
-            ).length,
-          },
-          {
-            label: 'Negative',
-            value: 'negative',
-            count: initialReviews.filter(
-              (r) => r.overallSentiment === 'negative'
-            ).length,
-          },
-          {
-            label: 'Mixed',
-            value: 'mixed',
-            count: initialReviews.filter((r) => r.overallSentiment === 'mixed')
-              .length,
-          },
-        ].map((tab) => (
-          <Button
-            key={tab.value}
-            variant={filterSentiment === tab.value ? 'secondary' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterSentiment(tab.value)}
-            className="text-xs h-7 gap-1.5"
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            aria-label="Search campaign feedback"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search feedback"
+            className="h-10 rounded-xl border-border/50 bg-card pl-10 shadow-none"
+          />
+        </div>
+
+        <Popover>
+          <PopoverTrigger
+            render={
+              <Button
+                type="button"
+                variant="outline"
+                className="h-10 gap-2 rounded-xl px-3"
+                aria-label={
+                  activeFilterCount
+                    ? `Feedback filters, ${activeFilterCount} active`
+                    : 'Open feedback filters'
+                }
+              >
+                <Filter aria-hidden="true" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Button>
+            }
+          />
+          <PopoverContent
+            align="end"
+            className="w-80 max-w-[calc(100vw-2rem)] gap-4 rounded-xl border border-border/60 shadow-lg"
           >
-            <span>{tab.label}</span>
-            <span className="text-[10px] text-muted-foreground">
-              ({tab.count})
-            </span>
-          </Button>
-        ))}
+            <PopoverHeader className="flex-row items-center justify-between">
+              <PopoverTitle>Feedback filters</PopoverTitle>
+              {activeFilterCount > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-xs text-muted-foreground"
+                  onClick={() => {
+                    setFilterSentiment('all');
+                    setFilterStatus('all');
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
+            </PopoverHeader>
+
+            <fieldset className="space-y-2">
+              <legend className="text-xs font-medium text-muted-foreground">
+                Sentiment
+              </legend>
+              <div
+                role="group"
+                aria-label="Filter by sentiment"
+                className="flex flex-wrap gap-1"
+              >
+                {sentimentOptions.map((option) => {
+                  const isSelected = filterSentiment === option.value;
+                  return (
+                    <Button
+                      key={option.value}
+                      type="button"
+                      variant={isSelected ? 'secondary' : 'ghost'}
+                      size="sm"
+                      aria-pressed={isSelected}
+                      onClick={() => setFilterSentiment(option.value)}
+                      className="h-8 px-2.5 text-xs"
+                    >
+                      {option.label}
+                    </Button>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-2">
+              <legend className="text-xs font-medium text-muted-foreground">
+                Analysis status
+              </legend>
+              <div className="space-y-1">
+                {statusOptions.map((option) => {
+                  const isSelected = filterStatus === option.value;
+                  return (
+                    <Button
+                      key={option.value}
+                      type="button"
+                      variant={isSelected ? 'secondary' : 'ghost'}
+                      size="sm"
+                      aria-pressed={isSelected}
+                      onClick={() => setFilterStatus(option.value)}
+                      className="h-8 w-full justify-start px-2.5 text-xs"
+                    >
+                      {option.label}
+                    </Button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Desktop Table View */}
@@ -123,9 +238,9 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
             <TableRow>
               <TableHead className="w-25">Rating</TableHead>
               <TableHead>Customer Feedback</TableHead>
-              <TableHead className="w-[120px]">Sentiment</TableHead>
-              <TableHead className="w-[130px]">Status</TableHead>
-              <TableHead className="w-[110px] text-right">Date</TableHead>
+              <TableHead className="w-30">Sentiment</TableHead>
+              <TableHead className="w-32.5">Status</TableHead>
+              <TableHead className="w-27.5 text-right">Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -159,7 +274,7 @@ export function ReviewsView({ initialReviews }: ReviewsViewProps) {
                       ))}
                     </div>
                   </TableCell>
-                  <TableCell className="max-w-[400px]">
+                  <TableCell className="max-w-100">
                     <p className="line-clamp-1 text-sm font-normal text-foreground">
                       {r.text}
                     </p>
